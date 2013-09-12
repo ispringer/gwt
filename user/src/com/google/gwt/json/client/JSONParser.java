@@ -124,11 +124,10 @@ public class JSONParser {
       // It was a primitive wrapper, unwrap it and try again.
       var func = @com.google.gwt.json.client.JSONParser::typeMap[typeof v];
       return func ? func(v) : @com.google.gwt.json.client.JSONParser::throwUnknownTypeException(Ljava/lang/String;)(typeof v);
-    } else if (o instanceof Array || o instanceof $wnd.Array) {
+    // Evergage: This is the same isArray approach that Underscore.js uses and will work even if the object being tested
+    //           was created in a different frame.
+    } else if ((Array.isArray && Array.isArray(o)) || (toString.call(o) == '[object Array]')) {
       // Looks like an Array; wrap as JSONArray.
-      // NOTE: this test can fail for objects coming from a different window,
-      // but we know of no reliable tests to determine if something is an Array
-      // in all cases.
       return @com.google.gwt.json.client.JSONArray::new(Lcom/google/gwt/core/client/JavaScriptObject;)(o);
     } else {
       // This is a basic JavaScript object; wrap as JSONObject.
